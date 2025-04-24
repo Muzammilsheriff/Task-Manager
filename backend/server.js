@@ -7,6 +7,7 @@ const connectDB = require("./config/db");
 let adminRoutes = require("./routes/adminRoutes");
 let userRoutes = require("./routes/userRoutes");
 let taskRoutes = require("./routes/taskRoutes");
+let reportRoutes = require("./routes/reportRoutes");
 const app = express();
 
 // Connect to MongoDB
@@ -28,7 +29,7 @@ app.use(express.json());
 app.use("/api/auth", adminRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/task", taskRoutes);
-// app.use("/api/report", require("./routes/report"))
+app.use("/api/report", reportRoutes)
 
 // Start the server
 const PORT = process.env.PORT || 5000;
