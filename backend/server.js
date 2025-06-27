@@ -28,12 +28,13 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", adminRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/task", taskRoutes);
-app.use("/api/report", reportRoutes)
+app.use("/api/tasks", taskRoutes);
+app.use("/api/report", reportRoutes);
 
-// Serve uploads Folder
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+app.get("/", (req, res) => {
+  res.json("Welcome to the Task Management API");
+});
 
 // Start the server
 const PORT = process.env.PORT || 5000;
