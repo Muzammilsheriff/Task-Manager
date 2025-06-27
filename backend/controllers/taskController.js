@@ -133,7 +133,7 @@ const createTask = async (req, res) => {
       task,
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error",error });
   }
 };
 
@@ -288,7 +288,7 @@ const getDashboardData = async (req, res) => {
     const pendingTasks = await Task.countDocuments({ status: "Pending" });
     const completedTasks = await Task.countDocuments({ status: "Completed"});
     const overdueTasks = await Task.countDocuments({
-      status: { $ne: "Completed" },
+      status: { $ne: "In Progress" },
       dueDate: { $lt: new Date() },
     });
 
@@ -313,7 +313,7 @@ const getDashboardData = async (req, res) => {
 
   //  Ensure all priorities are included
   const taskPriorities = ["Low", "Medium", "High"];
-  const taskPriorityDistributionRaw = await Task.aggregate([
+  const taskPriorityLevelRaw = await Task.aggregate([
     {
       $group: {
         _id: "$priority",
@@ -323,15 +323,30 @@ const getDashboardData = async (req, res) => {
   ]);
 
   const taskPriorityLevels = taskPriorities.reduce((acc, priority) => {
-    taskPrioritylevelRaw.find((item) => item._id === priority)?.count || 0;
-      return acc;
-    }, {});
+    acc[priority] =
+      taskPriorityLevelRaw.find((item) => item._id === priority)?.count || 0;
+    return acc;
+  }, {});
 
     // fetch recent 10 tasks
     const recentTasks = await Task.find({})
     .sort({ createdAt: -1 })
     .limit(10)
     .select("title status priority dueDate createdAt");
+
+    console.log({
+      statistics: {
+        allTasks,
+        pendingTasks,
+        completedTasks,
+        overdueTasks,
+      },
+      charts: {
+        taskDistribution,
+        taskPriorityLevels,
+      },
+      recentTasks,
+    });
 
     res.status(200).json({
       statistics: {
@@ -349,7 +364,7 @@ const getDashboardData = async (req, res) => {
 
 
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
