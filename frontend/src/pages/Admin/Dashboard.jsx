@@ -12,6 +12,7 @@ import { addThousandSeparator } from '../../utils/helper'
 import { LuArrowRight } from 'react-icons/lu'
 import TaskListTable from '../../components/TaskListTable'
 import CustomPieChart from '../../components/Chats/CustomPieChat'
+import CustomBarChart from '../../components/Chats/CustomBarChart'
 
 const COLORS = ["#8D51FF", "#008808", "#78CE00"]
 
@@ -39,9 +40,9 @@ const Dashboard = () => {
     setPieChartData(taskDistributionData)
 
     const priorityLevelData = [
-      { name: "Low", value: taskPriorityLevels?.low },
-      { name: "Medium", value: taskPriorityLevels?.medium },
-      { name: "High", value: taskPriorityLevels?.high },
+      { priority: "Low", count: taskPriorityLevels?.Low || 0 },
+      { priority: "Medium", count: taskPriorityLevels?.Medium || 0 },
+      { priority: "High", count: taskPriorityLevels?.High || 0 },
     ]
     setBarChartData(priorityLevelData)
   }
@@ -65,8 +66,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     getDashboardData()
-
-    return () => { }
   }, [])
 
   return (
@@ -115,24 +114,32 @@ const Dashboard = () => {
             color="bg-lime-500"
           />
         </div>
-
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4 md:my-6">
-
         <div>
           <div className="card">
             <div className="flex items-center justify-between">
               <h5 className="font-medium">Task Distributions</h5>
             </div>
-
             <CustomPieChart
               data={pieChartData}
+              label="Total Balance"
               colors={COLORS}
             />
           </div>
         </div>
 
+        <div>
+          <div className="card">
+            <div className="flex items-center justify-between">
+              <h5 className="font-medium">Task Priority Levels</h5>
+            </div>
+            <CustomBarChart
+              data={barChartData}
+            />
+          </div>
+        </div>
 
         <div className="md:col-span-2">
           <div className="card">
@@ -142,11 +149,11 @@ const Dashboard = () => {
                 See All <LuArrowRight className='text-base' />
               </button>
             </div>
-
             <TaskListTable tableData={dashboardData?.recentTasks || []} />
           </div>
         </div>
       </div>
+
     </DashboardLayout>
   )
 }
