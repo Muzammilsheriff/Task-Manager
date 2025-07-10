@@ -41,7 +41,6 @@ const Login = () => {
       });
 
       const { token, role } = res.data
-      console.log(res.data);
       
 
       if (token) {
